@@ -57,9 +57,9 @@
   # in a more logical manner.  But now, with the prettier format, you have to watch your semi-colons
   # ( ; ) or you will get syntax errors and your configuration will not rebuild.
 
-  # Yes, it's more typing (*gasp*) but start with the line-by-line layout as much as possible.  It
+  # Yes, it's more typing (*gasp*) but start with the line-by-line layout as much as possible.  It can
   # help you in the long run and what seems like an uneccessarily long configuration file now can
-  # latter more condensed and prettified later.
+  # later be more condensed and prettified.
 
   boot.loader.grub.enable = true;
   boot.loader.grub.version = 2;
