@@ -1,9 +1,31 @@
 
+# Verion: 0.0.1
+# Date: 07/02/2023
+# Last Updated: 07/02/2023
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
+
+# FILE AND CONFIGURATION IMPORTS
+
+# The hardware-configuration.nix is typically auto-generated and should require no changes.  
+# You would, however, use this for other configuration imports as needed.
+
+# Given the more advanced nature of NixOS, don't worry too much, just yet, about the import.
+# Work in this main configuration file first and get the base system established and 
+# reproducable first.  Doing just that is going to present its own challenges and can serve
+# to help you become familiar with the "Nix" way and how the configuration works.
+
+# Get the base system installed.  Then work on a window manager and if needed, a desktop
+# environment.  Start with a desktop environment you are familiar with such as XFCE, Cinnamon,
+# Gnome, etc.  Those are really easy to get going from a base install.
+
+# Then you can work on other system necessities such as sound, mouse/touchpad, networking if
+# not configured automaticall, wireless, etc.  By the time you get those working, you will have
+# a better understanding of the configuration file and can start to tackle more complex items.
 
 {
   imports =
@@ -11,19 +33,49 @@
       ./hardware-configuration.nix
     ];
 
-  # Bootloader.
-  #  boot.loader.systemd-boot.enable = true;
-  #  boot.loader.efi.canTouchEfiVariables = true;
+  # BOOTLOADER
+
+  # I have nothing against the systemd bootloader, I just kind of like GRUB more.  Don't get caught
+  # up in fancier configuration syntax starting out where groups of similar configuration items are
+  # enclosed in braces ( {} ), and put everything on its own line.  This will help you see the patterns
+  # and how things group together.  For example, the below lines could also be written as:
+
+  # boot.loader = {
+  #    grub = {
+  #        enable = true;
+  #        version = 2;  
+  #        device = "nodev";
+  #        efiSupport = true;
+  #    };
+  #    efi = {
+  #       canTouchEfiVariables = true;
+  #       efiSysMountPoint = "/boot";
+  #      };
+  #    };
+
+  # they are the same thing and do the same thing.  The above simply groups the configuration items
+  # in a more logical manner.  But now, with the prettier format, you have to watch your semi-colons
+  # ( ; ) or you will get syntax errors and your configuration will not rebuild.
+
+  # Yes, it's more typing (*gasp*) but start with the line-by-line layout as much as possible.  It
+  # help you in the long run and what seems like an uneccessarily long configuration file now can
+  # latter more condensed and prettified later.
+
   boot.loader.grub.enable = true;
+  boot.loader.grub.version = 2;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.grub.useOSProber = true;
 
+  # NETWORKING
+
   networking.hostName = "nixos"; # Define your hostname.
   networking.enableIPv6 = false;
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  # NETWORK PROXY
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
