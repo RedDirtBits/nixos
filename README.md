@@ -300,7 +300,7 @@ The _-F 32_ flag specifies the partition will be formated as fat32 as there are 
 Next, format the root partition
 
 ```bash
-sudo mkfs.ext4 /dev/sda2 -L nixroot
+sudo mkfs.ext4 -L nixroot /dev/sda2
 ```
 
 Finally, format the home partition
@@ -313,6 +313,168 @@ With that, we are done with the hard drive and everything is set up to start the
 
 # Mount The Partitions
 
+The order of operations is important in this part of the process.  It took banging my head on the wall and desk a few times, blaming the dog for all my woes, and wondering more than once how fun it might be to just set the computer on fire before I finally figured out what I was doing wrong.  The dog was happy afterwards too as she got a few treats for putting up with my ranting.  
+
+Before generating the configuration files for NixOS, we have to mount the partitions.  The important step here is that the root partition **must** be mounted first to whatever point used (typically _/mnt_).  Once that is done, folders will be created on that mount point for boot and home so the installer correctly picks them up and configures them in the _hardware-configuration.nix_ file.  It is also here that you will start to see the reason for creating the partition  names/labels.
+
+With that, let's mount the root partition **first**
+
+```bash
+sudo mount /dev/disk/by-label/nixroot /mnt
+```
+
+Now that the root partition is mounted, we need to create the directories that will mount the boot and home partitions under the _/mnt_ folder.  If you do this first, before mounting root to _/mnt_ the installer will not see the partitions correctly and you will end up with no boot partition and the machine will not reboot as a result. Notice also that we were able to mount the partition using its lable rather thand the less memorable UUID.
+
+With the root partition mounted to _/mnt_ we can now create the directories in _/mnt_ that will serve as the mount points for the boot and home partitions.
+
+```bash
+sudo mkdir -p /mnt/boot
+sudo mkdir -p /mnt/home
+```
+
+Once the mount points have been created, mount the boot and home partitions to their respective points
+
+```bash
+sudo mount /dev/disk/by-label/nixboot /mnt/boot
+sudo mount /dev/disk/by-label/home /mnt/home
+```
+
+After all this you definitely want to run the _lsblk_ command again and make sure everything is where it should be
+
+```bash
+$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+loop0    7:0    0 778.2M  1 loop /nix/.ro-store
+sda      8:0    0    64G  0 disk 
+├─sda1   8:1    0  1000M  0 part /mnt/boot
+├─sda2   8:2    0  29.3G  0 part /mnt
+└─sda3   8:3    0  33.7G  0 part /mnt/home
+sr0     11:0    1   812M  0 rom  /iso
+```
+
+# Create The Swap
+
+There always seems to be some contention around whether you need a swap partition or a swapfile or some other option.  Well, we didn't create a swap partition, so that leaves us with either using a swap file or some other method.  There also seems to be some contention around whether or not swap is needed at all if you have sufficient RAM.  I am not here to settle any of those debates, but I can show you two methods you can use.  We can create swap on disk or in memory.  The one thing I always splurge on when purchings a computer is RAM.  I will max it out
+
+The first option is to create a swapfile.  The other is to create a zram swap.  One uses hard drive space, the other uses RAM.
+
+My perspective would be (and I reserve the right to be wrong and properlly schooled) that if you are on a more resource constrained system (i.e. low RAM availability) it might be better to use a swapfile.  If you have plenty of RAM, then zram swap would be better.  What the threshold is for "plenty of ram" I am unclear on.  Personally, I would not consider anything 8Gb or less "plenty of ram".  But again, opinions and all.
+
+## Swapfile
+
+If you want to create a swapfile you do so with the following command
+
+```bash
+sudo fallocate -l 2G /mnt/.swapfile
+```
+
+We create it in the _/mnt_ directory because that is where the root partition is mounted.  However, in my experience thus far _hardware-configuration.nix_ does not pick this up correctly and thus a little tweaking is required there (shown later).  Once the swapfile has been created, permissions have to be set, it has to be formatted and then activated.  That can all be done with the following commands:
+
+```bash
+# change the swapfile permissions
+sudo chmod 600 /mnt/.swapfile
+
+# format the swapfile
+sudo mkswap /mnt/.swapfile
+
+# activate the swapfile
+sudo swapon /mnt/.swapfile
+```
+
+## Zram Swap
+
+If you want to use zram swap, there is nothing else to do at this stage.  Zram swap will be activated and configured in the _configuration.nix_ file with the following added to the configuraion:
+
+```bash
+# Enable zram swap
+zramSwap.enable = true;
+zramSwap.memoryPercent = 50; # sets swap to 50% of installed memory
+```
+
+# Generate NixOS Configuration Files
+
+We are almost there.  Next up is a rather simple step.  Generate the configuration files.  There is more that goes on than just the creation of those files, but it is the part we will be most engaged with since it will set up the system and is the mechanism that provide the reproducability of the system, its immutability, etc.  Once configuration is fully completed, you can take those configuration files and use them on other systems and create a carbon copy of the setup.
+
+To generate the configuration files, run  the following command
 
 
+```bash
+sudo nixos-generate-config --root /mnt
+```
 
+Once this has been done, change your directory to _/mnt/etc/nixos/_ and make sure that you see the two configuration files _configuration.nix_ and _hardware-configuration.nit_ there.
+
+After that, you want to open up the _hardware-configuration.nix_ file so we can inspect it and make sure the partitions were picked up correctly (this was one of the tell tales that I had done things wrong and was ranting at the dog for).
+
+```bash
+# Do not modify this file!  It was generated by ‘nixos-generate-config’
+# and may be overwritten by future invocations.  Please make changes
+# to /etc/nixos/configuration.nix instead.
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  imports = [ ];
+
+  boot.initrd.availableKernelModules = [ "ata_piix" "ohci_pci" "ehci_pci" "ahci" "sd_mod" "sr_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/8159118b-c904-40b7-8af7-bcd400a725bf";
+      fsType = "ext4";
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/E66F-198F";
+      fsType = "vfat";
+    };
+
+  fileSystems."/home" =
+    { device = "/dev/disk/by-uuid/7663629f-9d1a-49e0-9c68-2aa83b0411fb";
+      fsType = "ext4";
+    };
+
+  swapDevices = [ ];
+
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.enp0s3.useDHCP = lib.mkDefault true;
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  virtualisation.virtualbox.guest.enable = true;
+```
+
+Remember those partition labels create so long ago?  Well, they are about to shine again.  Notice in the above configuration that the disks (partitions) are identified using those cryptic UUID's.  If you were to now take this configuration and use it on another machine, those UUID's would be different and things would not work, even if you precisely followed all the other steps herein.  However, we can make a change here and better ensure the portability of this file (assuming you followed the steps in this document, particularly the partitioning labels).  We will change the _by-uuid_ part to _by-label_ as seen below
+
+```bash
+fileSystems."/" =
+{ device = "/dev/disk/by-label/nixroot";
+    fsType = "ext4";
+};
+
+fileSystems."/boot" =
+{ device = "/dev/disk/by-label/nixboot";
+    fsType = "vfat";
+};
+
+fileSystems."/home" =
+{ device = "/dev/disk/by-label/home";
+    fsType = "ext4";
+};
+```
+
+Lastly, notice how the _swapDevices_ is empty.  If you opted for a swapfile and generated it as described, we need to make sure system is aware of it.  This requires changing it as seen in the above configuration file to:
+
+```bash
+swapDevices = [
+    {
+        device = "/.swapfile;
+    }
+];
+```
+
+We don't use _/mnt/.swapfile_ because when the machine is rebooted to finish the installation _/mnt_ will become _/_, a.k.a., the root folder.  If you opted for the zramswap, then leave the swapDevices as it is, we will configure it in the _configuration.nix_ file.  Don't forget to save the changes made to the file.
