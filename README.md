@@ -16,7 +16,7 @@ There you have it.  That's your warning up front.
 
 # Goals
 
-I don't have a great deal of experience with NixOS, but what little I have, has left me with a love of all it can do.  The idea of being able to build out a system exactly how you want it and make that a repeatable process across machines is something so appealing to me that it has driven me to try and navigate the more advanced nature of NixOS.
+I don't have a great deal of experience with NixOS but what little I have has left me with a love of all it can do.  The idea of being able to build out a system exactly how you want it and make that a repeatable process across machines is something so appealing to me that it has driven me to try and navigate the more advanced nature of NixOS.
 
 Despite having used Linux for a number of years now, NixOS has made me realize how little I know and how much goes on behind the scenes when you download a live USB installer and set up a new computer.  It has been a rather humbling experience.  A good one, but humbling nonetheless.
 
@@ -29,4 +29,47 @@ As such, the goal is, as mentioned, to replicate my current set up potentially w
 # Getting Started
 
 First, another quick **WARNING**.  This process will wipe your hard drive.  We are going to wipe out the partitions on the hard drive, create new ones and format them.  There are already a metric crap ton of articles and videos on how to download an ISO image and write/burn it to a USB drive so I won't cover that here.  This process will start from the point of you having booted from the USB using the NixOS minimal ISO and are sitting at the command prompt.
+
+We will be starting from scratch.  No GUI guided installation, no [Calamares](https://calamares.io/), no [ncurses](https://en.wikipedia.org/wiki/Ncurses).  Just the good ole command line.
+
+# Repartitioning
+
+There are several utilities that can do this such as [fdisk](https://linux.die.net/man/8/fdisk) or [gdisk](https://linux.die.net/man/8/gdisk) just to name a couple.  This process will be using _fdisk_.
+
+The first command you want to run is _lsblk_.  That should generate some output similar to below:
+
+```bash
+NAME                MAJ:MIN RM   SIZE RO TYPE  MOUNTPOINTS
+sda                   8:0    0 223.6G  0 disk  
+nvme0n1             259:0    0 465.8G  0 disk  
+├─nvme0n1p1         259:1    0     1M  0 part  
+├─nvme0n1p2         259:2    0   513M  0 part  /boot/efi
+├─nvme0n1p3         259:3    0   1.7G  0 part  /boot
+└─nvme0n1p4         259:4    0 463.6G  0 part  
+  └─nvme0n1p4_crypt 253:0    0 463.6G  0 crypt 
+    ├─vgmint-root   253:1    0 462.6G  0 lvm   /
+    └─vgmint-swap_1 253:2    0   980M  0 lvm   [SWAP]
+```
+
+If you have only one hard drive on the system, it makes things easier, but if you have multiple drives you want to make **absolutely** certain you are targeting the right drive with the fdisk commands.  Your drive names may differ as well.  If you have a NVMe drive installed you will see something similar to the output above with _nvme0n1_ being the drive itself and _p1_, _p2_ in the name indicating different partitions.  If you have a SSD drive you may see something like _sda_, _sdb_ and so on.
+
+Whichever the case may be for you, be sure you are working with the right drive in the case where multiple drives are installed.  In this process I will be working with a NVMe drive.
+
+I am working on a UEFI based system, so if you are using a BIOS based system, the process may differ slightly.
+
+Run the following command:
+
+```bash
+fdisk /dev/nvme0n1
+```
+
+That will take you into the fdisk utility and it will be targeting the NVMe drive.  You can type the letter _m_ and get a list of the available menu options.  For our purposes we will start with the letter _d_ to delete all the partions on the drive.  Delete all the partitions until it indicates there are none left.
+
+Now, in the interest of full disclosure, I tend to do things a little unconventionally.  Most would just perform all the actions needed in the fdisk utility then write the changes and move on.  I am a little quirky that way.  I prefer to complete stages of work, write or save so I don't have to redo it should I mess something up in a later step of the same work.  To each their own, it's just my preference, it doesn't mean it has to be yours or the way you do things.  Don't be hatin' on me.
+
+With that in mind, type the letter _w_ to write the changes to disk.  This will also have the effect of ending the fdisk utility session.  So you will have to re-enter the utility for the same drive as done at the beginning.
+
+Once back in the utility, type the letter _g_.  This will create GPT partitioning table.  I would write this to disk too (_w_), then re-enter the utility, again.  I know, I know.  I told you I was unconventional.  Deal with it.
+
+Now that you are back in the fdisk utility for the NVMe drive, we will, finally, create the partitions.  At a minimum you will need a _boot_ partition and a _root_ partition.  If you want a separate _home_ partition (which I will use) that will need to be created as well.  Given that, type the letter _n_ to create a new partition (it should default to partition number 1).  This will be the _boot_ partition.
 
