@@ -1,13 +1,17 @@
+# Version: 0.0.1
+# Date Created: 07/08/2023
+# Target Device: Dell XPS15 9550
+
+
+# This is the base configuration for a Dell XPS15 9550, i7 6th Gen., 32Gb Ram, Nvidia GPU, 512Gb NVMe
+# It is a known good base configuration from a NixOS minimal ISO install.
+# Some configuration parameters have been added but commented out in anticipation of the final set up.
+# Though the final system configuration may change
+
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running `nixos-help`).
-
-# Version: 0.0.1
-# Date Created: 07/08/2023
-# Target Device: Dell XPS15
-#
-# This is the base configuration for a Dell XPS15 9550, i7 6th Gen., 32Gb Ram, Nvidia GPU
-# It is a known good base configuration from a NixOS minimal ISO install.
 
 { config, pkgs, ... }:
 
