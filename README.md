@@ -32,6 +32,29 @@ First, another quick **WARNING**.  This process will wipe your hard drive.  We a
 
 We will be starting from scratch.  No GUI guided installation, no [Calamares](https://calamares.io/), no [ncurses](https://en.wikipedia.org/wiki/Ncurses).  Just the good ole command line.
 
+# Connectivity
+
+If you are working on a laptop that has only wireless connectivity you will need to activate that as NixOS will need to dowload several packages to complete the installation.  You could, of course, use a USB Ethernet adapter as well, but just in case that is not an option.  Booting from the minimal ISO, once you are at a command prompt, run the following commands:
+
+```bash
+sudo systemctl start wpa_supplicant
+wpa_cli
+```
+
+This will drop you into the CLI for configuring wireless.  If you do not see `0` or `OK` after executing a command, be sure you have entered everything correctly.
+
+```bash
+add_network
+set_network 0 ssid "Your SSID"
+set_network 0 psk "Your WiFi Password"
+set_network 0 key_managment WPA-PSK
+enable_network
+```
+
+You should see some kind of confirmation that wireless is now connected.  You can type `quit` to exit the CLI.  Once back at the command prompt you can run the command `ifconfig` to make sure you have obtained an IP address.  If so, once you have an IP address you can use SSH to reach the machine.  However, you have to set a password first.  When booting from the minimal ISO the default user is `nixos`.  You can type the command `passwd`, set a password to use for SSH then go to the machine you want to connect from and run the command `ssh -l nixos [ip address]`.  Accept the fingerprint then enter the password you set.
+
+It makes life easier being able to remotely connect to the device you want to set up as you can copy and paste, lookup information, etc. 
+
 # Repartitioning
 
 There are several utilities that can do this such as [fdisk](https://linux.die.net/man/8/fdisk) or [gdisk](https://linux.die.net/man/8/gdisk) just to name a couple.  This process will be using _fdisk_.
@@ -368,6 +391,8 @@ If you want to create a swapfile you do so with the following command
 sudo fallocate -l 2G /mnt/.swapfile
 ```
 
+This will create a 2Gb swap file.  You can make it larger if you so desire.
+
 We create it in the _/mnt_ directory because that is where the root partition is mounted.  However, in my experience thus far _hardware-configuration.nix_ does not pick this up correctly and thus a little tweaking is required there (shown later).  Once the swapfile has been created, permissions have to be set, it has to be formatted and then activated.  That can all be done with the following commands:
 
 ```bash
@@ -477,4 +502,25 @@ swapDevices = [
 ];
 ```
 
-We don't use _/mnt/.swapfile_ because when the machine is rebooted to finish the installation _/mnt_ will become _/_, a.k.a., the root folder.  If you opted for the zramswap, then leave the swapDevices as it is, we will configure it in the _configuration.nix_ file.  Don't forget to save the changes made to the file.
+We don't use _/mnt/.swapfile_ because when the machine is rebooted to finish the installation _/mnt_ will become _/_, a.k.a., the root folder.  If you opted for the zramswap, then leave the swapDevices as it is, we will configure it in the _configuration.nix_ file.  Don't forget to save the changes made to the file.  The last thing to do before we start the installation process is configure _configuration.nix_ with at least a few basic things.  You _could_ start the install now, but the _configuration.nix_ file is pretty sparse, nearly all options are commented out, most notably, the creation of a user.  It's basically just a boot loader to get you back in the system
+
+# System Configuration
+
+At this point, the last task is to work the system configuration file _configuration.nix_.  Unfortunately, the best I can do here is documnet my journey in this because the system configuration is, to some extent, full of personal preferences and, depending on the amount of customization of the hardware, may be highly hardware specific.  The one thing I may suggest is to leave the GUI part, that is, setting up and configuring a window manager, desktop manager, etc. until you have most other things as you want and/or need them.
+
+I spent a lot of time rebuilding NixOS because I would turn on a window manager or desktop manager only to find out I had messed something up and either could not get back to a console (forgot to install one) or some other hinderence the prevented correcting the mistake, at least at my current level of knowledge.  My take-away from that was to save that part for as close to the end as possible.  There are many other things that can be set up and tweaked before hand.
+
+My intention, at least at the time of writing all this, is to document as best I can, the journey back to a fully functioning machine state as if I had simply gone the more traditional route and just used some distro live USB installer to set up a machine.  My current guinea pig is my older but still very useful and very snappy Dell XPS15.
+
+Stay tuned if you are interested.  And, of course, if you are more experienced with such things, please, don't hesitate to point out things I may be doing wrong or going about the wrong way.  My aim is to get this laptop back to a state where I can simply reinstall everything and be back to a state where the system has all the applications I regularly use, configured in the manner I have them and make it a s reproduceable as possible.
+
+That all being said, once you have your configuration files (_configuration.nix_) set up so that you can at least reboot back into the system, you will need to run the command `sudo nixos-install`.  That's it.  It will take potentially several minutes to complete, but then you can unplug the bootable NixOS minimal ISO USB drive and continue on.
+
+Oh, one final thing.  Yes, I realize how long this document is.  My plan is to refine it as best I am able and then break it up into smaller chunks at some point.
+
+# Links
+
+- [NixOS Wiki](https://nixos.wiki/)
+  - [NixOS Options](https://search.nixos.org/options?)
+  - [NixOS Packages](https://search.nixos.org/packages?)
+- [NixOS Manual](https://nixos.org/manual/nixos/stable/index.html)
