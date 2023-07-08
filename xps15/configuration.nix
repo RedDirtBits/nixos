@@ -87,7 +87,9 @@
     initialPassword = "nixos";
     description = "RedDirt";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [];
+    packages = with pkgs; [
+      firefox
+    ];
   };
 
   # List packages installed in system profile. To search, run:
