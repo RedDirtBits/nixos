@@ -2,6 +2,16 @@
 
 Adventures in learning [NixOS](https://nixos.org/).
 
+# Table of Contents
+
+- [Wireless Connectivity](https://github.com/RedDirtBits/nixos/blob/main/docs/001-connectivity.md)
+- [Repartitioning the Hard Drive](https://github.com/RedDirtBits/nixos/blob/main/docs/002-repartitioning.md)
+- [Formatting the Partitions](https://github.com/RedDirtBits/nixos/blob/main/docs/003-partition-formatting.md)
+- [Mounting the Partitions](https://github.com/RedDirtBits/nixos/blob/main/docs/004-mounting-partitions.md)
+- [Swap](https://github.com/RedDirtBits/nixos/blob/main/docs/005-swap.md)
+- [Generating NixOS Configuration Files](https://github.com/RedDirtBits/nixos/blob/main/docs/006-nixos-configuration-files.md)
+- [System Configuration](https://github.com/RedDirtBits/nixos/blob/main/docs/007-system-configuration.md)
+
 ## WARNING
 
 I am a _verbose_ person.  I won't apologize for that, but I will at least make it known up front.  It's just how I was brought up, how I started in technology and how, in general, the world around me worked at those more impressionable years.  Unfortunately it is not something that is compatible with _today's_ world of much shorter attention spans.
@@ -524,3 +534,4 @@ Oh, one final thing.  Yes, I realize how long this document is.  My plan is to r
   - [NixOS Options](https://search.nixos.org/options?)
   - [NixOS Packages](https://search.nixos.org/packages?)
 - [NixOS Manual](https://nixos.org/manual/nixos/stable/index.html)
+- [NixOS Home Manager](https://nix-community.github.io/home-manager/index.html)
