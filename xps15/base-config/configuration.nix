@@ -34,7 +34,7 @@
   networking.hostName = "xps15"; # Define your hostname.
   networking.domain = "reddirt.net";
   networking.enableIPv6 = false;
-  networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
+  networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8" ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
   # Pick only one of the below networking options.
