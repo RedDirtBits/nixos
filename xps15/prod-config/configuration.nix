@@ -3,14 +3,11 @@
 # Target Device: Dell XPS15 9550
 
 # Latest changes:
-
+# 07-13-2023
+# - enabled ssh with password authentication for remote access to the device
 
 # This is the base configuration for a Dell XPS15 9550, i7 6th Gen., 32Gb Ram, Nvidia GPU, 512Gb NVMe
 # Production System Configuration
-
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running `nixos-help`).
 
 { config, pkgs, ... }:
 
@@ -20,9 +17,7 @@
       ./hardware-configuration.nix
     ];
 
-  # Use the systemd-boot EFI boot loader.
-  # boot.loader.systemd-boot.enable = true;
-  # boot.loader.efi.canTouchEfiVariables = true;
+  # Enable the GRUB2 bootloader
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
@@ -36,16 +31,12 @@
   networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
-  # Pick only one of the below networking options.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+
+  # Use Network Manager for network connections
+  networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "US/Central";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -59,10 +50,10 @@
   nixpkgs.config.allowUnfree = true;
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.cinnamon.enable = true;
-  services.cinnamon.apps.enable = false;
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.desktopManager.cinnamon.enable = true;
+  # services.cinnamon.apps.enable = false;
 
   # Configure keymap in X11
   services.xserver.layout = "us";
@@ -70,16 +61,16 @@
   services.xserver.enableCtrlAltBackspace = true;
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  # services.printing.enable = true;
 
   # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire.enable = true;
-  services.pipewire.alsa.enable = true;
-  services.pipewire.alsa.support32Bit = true;
-  services.pipewire.pulse.enable = true;
+  # sound.enable = true;
+  # hardware.pulseaudio.enable = false;
+  # security.rtkit.enable = true;
+  # services.pipewire.enable = true;
+  # services.pipewire.alsa.enable = true;
+  # services.pipewire.alsa.support32Bit = true;
+  # services.pipewire.pulse.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -98,6 +89,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    alacritty
     wget
     git
     curl
@@ -123,7 +115,12 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
+
+  # Enable password authentication temporarily while the device is being configured
+  # The documentation shows services.openssh.passwordAuthentication, however, this has been
+  # deprecated in favor of the below syntax
+  services.openssh.settings.PasswordAuthentication = true;
 
   # Enable temperature management daemon
   services.thermald.enable = true;
