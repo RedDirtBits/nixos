@@ -13,7 +13,7 @@ This will drop you into the CLI for configuring wireless.  If you do not see `0`
 add_network
 set_network 0 ssid "Your SSID"
 set_network 0 psk "Your WiFi Password"
-set_network 0 key_managment WPA-PSK
+# set_network 0 key_managment WPA-PSK
 enable_network
 ```
 
