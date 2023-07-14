@@ -10,4 +10,28 @@ Stay tuned if you are interested.  And, of course, if you are more experienced w
 
 That all being said, once you have your configuration files (_configuration.nix_) set up so that you can at least reboot back into the system, you will need to run the command `sudo nixos-install`.  That's it.  It will take potentially several minutes to complete, but then you can unplug the bootable NixOS minimal ISO USB drive and continue on.
 
-Oh, one final thing.  Yes, I realize how long this document is.  My plan is to refine it as best I am able and then break it up into smaller chunks at some point.
+One of the first things you want to do after you boot into NixOS the first time is make sure everything is up-to-date.  At the very end of the file _/etc/nixos/configuration.nix_ is a line that shows your _state version_
+
+```bash
+system.stateVersion = "23.05";
+```
+
+The channel you are on _should_ match the state version, at least at this point.  That is, the default, initial install.  You can confirm with:
+
+```bash
+sudo nix-channel --list
+```
+
+You can run the following command to get all the updates:
+
+```bash
+sudo nix-channel --update
+```
+
+Finally, rebuild and switch which will update all the packages:
+
+```bash
+sudo nixos-rebuild switch
+```
+
+At this stage all your packages should be up-to-date and you can begin setting up your system and building the final configuration.
