@@ -102,6 +102,16 @@ Help:
    s   create a new empty Sun partition table
 ```
 
+**NOTE**:
+
+For deleting all the partions in one go you can use _wipefs_.  There is a good article on the utility [here](https://linuxconfig.org/wipefs-linux-command-tutorial-with-examples).  The man pages are [here](https://manpages.debian.org/bullseye/util-linux/wipefs.8.en.html).  To use you can run the following command:
+
+```bash
+sudo wipefs -a /dev/sda
+```
+
+Of course, your drive may not be _sda_, it could be _nvme0n1_ for example.  So be sure to target the correct drive.
+
 For our purposes we will start with the letter _d_ to delete all the partions on the drive.  Delete all the partitions until it indicates there are none left.
 
 ```bash
