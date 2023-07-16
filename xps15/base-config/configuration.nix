@@ -19,7 +19,7 @@
   boot.loader.grub.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.grub.useOSProber = true; # don't really need this unless using multiple operating systems
 
   networking.hostName = "xps15";
   networking.domain = "reddirt.net";
@@ -27,33 +27,65 @@
   networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8" ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = true; # automatically activates wireless
+  programs.nm-applet.enable = true; # activates the network manager "gui" for managing connections
 
   # Set your time zone.
   time.timeZone = "US/Central";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    earlySetup = true;
-    font = null;
-    keyMap = "us";
-  };
+
+  # Configure the X11 keymap
+  services.xserver.layout = "us";
+  services.xserver.xkbVariant = "";
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;  # Needed for things like nVida or other drivers that are proprietary
+
+  # Display server and Window managers
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.windowManager.awesome.enable = true;
+  # services.xserver.windowManager.dwm.enable = true;
+
+  # Enable printing (CUPS)
+  # services.printing.enable = true;
+  # services.printing.drivers = with pkgs; [ hplip hplipWithPlugin ];
+
+  # Enable scanning (will need to add user to "scanner" group)
+  # hardware.sane.enable = true;
+  # hardware.sane.extraBackends = [ pkgs.hplipWithPlugin ];
+
+  # Enable GVFS (Needed to recognize other internal drives, external storage, etc. in the filesystem)
+  # services.gvfs.enable = true;
+
+  # Enable default shell (may be the default and thus not needed?)
+  # programs.bash.enable = true;
+  # users.defaultUserShell = pkgs.bash;
+
+  # Enable Bluetooth (if so equipped)
+  # hardware.bluetooth.enable = true;
+
+  # Enable Flatpak
+  # services.flatpak.enable = true;
+  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  # xdg.portal.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.reddirt = {
     isNormalUser = true;
     initialPassword = "nixos";
     description = "RedDirt";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
+    extraGroups = [ "networkmanager" "wheel" "audio" "scanner" "lp" "dialout" "libvirtd" "vboxusers" ];
+    packages = with pkgs; [ # packages to install only for the user
       firefox
     ];
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [ # packages to be installed and available system wide
     alacritty
     wget
     git
@@ -63,6 +95,7 @@
     neofetch
     pciutils
     usbutils
+    # etcher
   ];
 
   # Enable zram swap
