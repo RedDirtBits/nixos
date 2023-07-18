@@ -10,13 +10,24 @@
       ./hardware-configuration.nix
     ];
 
+##########################################################################
+# BOOT LOADER
+##########################################################################
+
   # Enable the GRUB2 bootloader
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
   boot.loader.grub.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
-  # boot.loader.grub.useOSProber = true; # not needed unless dual booting
+
+  # The OS Prober is used when you have multiple operating systems such as
+  # when dual booting
+  # boot.loader.grub.useOSProber = true;
+
+##########################################################################
+# NETWORK OPTIONS
+##########################################################################
 
   networking.hostName = "xps15";
   networking.domain = "reddirt.net";
@@ -24,44 +35,37 @@
   networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
-  networking.networkmanager.enable = true; # automatically activates wireless
-  # programs.nm-applet.enable = true; # activates network manager system tray applet
 
-  # Set your time zone.
-  time.timeZone = "US/Central";
+  # automatically activates wireless
+  networking.networkmanager.enable = true;
 
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
+  # activates network manager system tray applet
+  # programs.nm-applet.enable = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+##########################################################################
+# FIREWALL OPTIONS
+##########################################################################
 
-  # In order to run VS Code, you have to use Electron.  
-  # To use Electron you have to allow "insecure" packages
-  nixpkgs.config.permittedInsecurePackages = [ 
-    "electron-12.2.3" 
-  ];
+  # Open ports in the firewall.
+  # networking.firewall.allowedTCPPorts = [ ... ];
+  # networking.firewall.allowedUDPPorts = [ ... ];
+  # Or disable the firewall altogether.
+  # networking.firewall.enable = false;
 
-  # Display server and Window managers
-  # services.xserver.enable = true;
-  # services.xserver.xautolock.enable = true;
-  # services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.windowManager.awesome.enable = true;
-  # services.xserver.windowManager.dwm.enable = true;
+##########################################################################
+# SYSTEM SERVICES
+##########################################################################
 
-  # Configure keymap in X11
-  services.xserver.layout = "us";
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
 
-  # Enable nVidia GPU
-  # services.xserver.videoDrivers = [ "nvidia" ];
-  # hardware.nvidia.prime.offload.enable = true;
-  # hardware.nvidia.prime.offload.nvidiaBusId = "PCI:1:0:0";
-  # hardware.nvidia.prime.offload.intelBusId = "PCI:0:2:0";
-  # hardware.nvidia.modesetting.enable = false;
+  # Enable password authentication temporarily while the device is being configured
+  # The documentation shows services.openssh.passwordAuthentication
+  # however, this has been   # deprecated in favor of the below syntax
+  services.openssh.settings.PasswordAuthentication = true;
 
-  # Enable printing (CUPS)
-  # services.printing.enable = true;
-  # services.printing.drivers = with pkgs; [ hplip hplipWithPlugin ];
+  # Enable temperature management daemon
+  services.thermald.enable = true;
 
   # Enable GVFS (Needed to recognize other internal drives, external storage, etc. in the filesystem)
   # services.gvfs.enable = true;
@@ -72,6 +76,66 @@
   # Enable Bluetooth (if so equipped)
   # hardware.bluetooth.enable = true;
 
+##########################################################################
+# TIMEZONE AND LOCALE OPTIONS
+##########################################################################
+
+  # Set your time zone.
+  time.timeZone = "US/Central";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  # Configure keymap in X11
+  services.xserver.layout = "us";
+
+##########################################################################
+# MISCELLANEOUS OPTIONS
+##########################################################################
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  # In order to run VS Code, you have to use Electron.  
+  # To use Electron you have to allow "insecure" packages
+  nixpkgs.config.permittedInsecurePackages = [ 
+    "electron-12.2.3" 
+  ];
+
+##########################################################################
+# DISPLAY SERVER, DISPLAY MANAGER(S), WINDOW MANAGER(S) OPTIONS
+##########################################################################
+
+  # Display server and Window managers
+  # services.xserver.enable = true;
+  # services.xserver.xautolock.enable = true;
+  # services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.windowManager.awesome.enable = true;
+  # services.xserver.windowManager.dwm.enable = true;
+
+##########################################################################
+# GPU OPTIONS
+##########################################################################
+
+  # Enable nVidia GPU
+  # services.xserver.videoDrivers = [ "nvidia" ];
+  # hardware.nvidia.prime.offload.enable = true;
+  # hardware.nvidia.prime.offload.nvidiaBusId = "PCI:1:0:0";
+  # hardware.nvidia.prime.offload.intelBusId = "PCI:0:2:0";
+  # hardware.nvidia.modesetting.enable = false;
+
+##########################################################################
+# PRINTING OPTIONS
+##########################################################################
+
+  # Enable printing (CUPS)
+  # services.printing.enable = true;
+  # services.printing.drivers = with pkgs; [ hplip hplipWithPlugin ];
+
+##########################################################################
+# SOUND OPTIONS
+##########################################################################
+
   # Enable sound.
   # sound.enable = true;
   # hardware.pulseaudio.enable = false;
@@ -81,13 +145,16 @@
   # services.pipewire.alsa.support32Bit = true;
   # services.pipewire.pulse.enable = true;
 
+##########################################################################
+# TOUCHPAD/MOUSE OPTIONS
+##########################################################################
+
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Enable Flatpak
-  # services.flatpak.enable = true;
-  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  # xdg.portal.enable = true;
+##########################################################################
+# USER/USER ACCOUNT OPTIONS
+##########################################################################
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.reddirt = {
@@ -99,6 +166,10 @@
       firefox
     ];
   };
+
+##########################################################################
+# SYSTEM WIDE PACKAGES
+##########################################################################
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -114,6 +185,15 @@
     usbutils
   ];
 
+  # Enable Flatpak
+  # services.flatpak.enable = true;
+  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  # xdg.portal.enable = true;
+
+##########################################################################
+# SWAP
+##########################################################################
+
   # Enable zram swap
   zramSwap.enable = true;
   zramSwap.memoryPercent = 25; # sets swap to 25% of installed memory
@@ -125,25 +205,6 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
-  # Enable password authentication temporarily while the device is being configured
-  # The documentation shows services.openssh.passwordAuthentication, however, this has been
-  # deprecated in favor of the below syntax
-  services.openssh.settings.PasswordAuthentication = true;
-
-  # Enable temperature management daemon
-  services.thermald.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
