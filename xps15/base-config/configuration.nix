@@ -45,6 +45,7 @@
 
   # Display server and Window managers
   # services.xserver.enable = true;
+  # services.xserver.xautolock.enable = true;
   # services.xserver.displayManager.lightdm.enable = true;
   # services.xserver.windowManager.awesome.enable = true;
   # services.xserver.windowManager.dwm.enable = true;
@@ -59,6 +60,9 @@
 
   # Enable GVFS (Needed to recognize other internal drives, external storage, etc. in the filesystem)
   # services.gvfs.enable = true;
+
+  # Enable adb if you work on your mobile device
+  # programs.adb.enable = true;
 
   # Enable default shell (may be the default and thus not needed?)
   # programs.bash.enable = true;
@@ -77,7 +81,7 @@
     isNormalUser = true;
     initialPassword = "nixos";
     description = "RedDirt";
-    extraGroups = [ "networkmanager" "wheel" "audio" "scanner" "lp" "dialout" "libvirtd" "vboxusers" ];
+    extraGroups = [];
     packages = with pkgs; [ # packages to install only for the user
       firefox
     ];
