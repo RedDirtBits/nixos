@@ -36,6 +36,13 @@ boot.loader.efi.efiSysMountPoint = "/boot";
 boot.loader.grub.useOSProber = true;
 ```
 
+If, however, you wish to use systemd, then you can use the following:
+
+```bash
+boot.loader.systemd-boot.enable = true;
+boot.loader.efi.canTouchEfiVariables = true;
+```
+
 ## Networking
 
 I am, as a general rule, not a fan of things being automatically configured for me.  It's part security thinking (not that I am any expert in this area) but more so just a learning thing and, well, perhaps more evidence I am just weird and unconventional.  The point to all that was to say you may see some things in my configurations that may not be in others that meant to just get you up and running.  The network configuration in NixOS is one such area.
@@ -47,8 +54,9 @@ I am, as a general rule, not a fan of things being automatically configured for 
   networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
-  networking.usePredictableInterfaceNames = false;
+  networking.usePredictableInterfaceNames = false; # not really needed, just used for testing
   networking.networkmanager.enable = true;
+  programs.nm-applet.enable = true; # activates the netowork manager "gui" applet
   ```
 
 I believe most of the options above are pretty self-explanatory though, I will go over a few.
