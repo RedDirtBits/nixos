@@ -84,6 +84,12 @@
     ];
   };
 
+  # In order to run VS Code, you have to use Electron.  To use Electron
+  # you have to allow "insecure" packages
+  nixpkgs.config.permittedInsecurePackages = [ 
+    "electron-12.2.3" 
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
