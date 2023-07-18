@@ -26,7 +26,7 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-label/nixroot";
+    { device = "/dev/disk/by-label/nixos";
       fsType = "ext4";
     };
 
@@ -35,10 +35,10 @@
       fsType = "vfat";
     };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-label/home";
-      fsType = "ext4";
-    };
+  # fileSystems."/home" =
+  #   { device = "/dev/disk/by-label/home";
+  #     fsType = "ext4";
+  #   };
 
   swapDevices = [ ];
 

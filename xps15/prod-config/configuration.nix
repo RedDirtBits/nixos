@@ -2,13 +2,6 @@
 # Date Created: 07/08/2023
 # Target Device: Dell XPS15 9550
 
-# Latest changes:
-# 07-13-2023
-# - enabled ssh with password authentication for remote access to the device
-
-# This is the base configuration for a Dell XPS15 9550, i7 6th Gen., 32Gb Ram, Nvidia GPU, 512Gb NVMe
-# Production System Configuration
-
 { config, pkgs, ... }:
 
 {
@@ -23,43 +16,61 @@
   boot.loader.grub.efiSupport = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
-  boot.loader.grub.useOSProber = true;
+  # boot.loader.grub.useOSProber = true; # not needed unless dual booting
 
-  networking.hostName = "xps15"; # Define your hostname.
+  networking.hostName = "xps15";
   networking.domain = "reddirt.net";
   networking.enableIPv6 = false;
   networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
-
-  # Use Network Manager for network connections
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = true; # automatically activates wireless
+  # programs.nm-applet.enable = true; # activates network manager system tray applet
 
   # Set your time zone.
   time.timeZone = "US/Central";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-  console = {
-    earlySetup = true;
-    font = null;
-    keyMap = "us";
-  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Enable the X11 windowing system.
+  # In order to run VS Code, you have to use Electron.  
+  # To use Electron you have to allow "insecure" packages
+  nixpkgs.config.permittedInsecurePackages = [ 
+    "electron-12.2.3" 
+  ];
+
+  # Display server and Window managers
   # services.xserver.enable = true;
+  # services.xserver.xautolock.enable = true;
   # services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.windowManager.awesome.enable = true;
+  # services.xserver.windowManager.dwm.enable = true;
 
   # Configure keymap in X11
   services.xserver.layout = "us";
-  services.xserver.xkbOptions = "ctrl:nocaps,terminate:ctrl_alt_bksp";
-  services.xserver.enableCtrlAltBackspace = true;
 
-  # Enable CUPS to print documents.
+  # Enable nVidia GPU
+  # services.xserver.videoDrivers = [ "nvidia" ];
+  # hardware.nvidia.prime.offload.enable = true;
+  # hardware.nvidia.prime.offload.nvidiaBusId = "PCI:1:0:0";
+  # hardware.nvidia.prime.offload.intelBusId = "PCI:0:2:0";
+  # hardware.nvidia.modesetting.enable = false;
+
+  # Enable printing (CUPS)
   # services.printing.enable = true;
+  # services.printing.drivers = with pkgs; [ hplip hplipWithPlugin ];
+
+  # Enable GVFS (Needed to recognize other internal drives, external storage, etc. in the filesystem)
+  # services.gvfs.enable = true;
+
+  # Enable adb if you work on your mobile device
+  # programs.adb.enable = true;
+
+  # Enable Bluetooth (if so equipped)
+  # hardware.bluetooth.enable = true;
 
   # Enable sound.
   # sound.enable = true;
@@ -73,6 +84,11 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # Enable Flatpak
+  # services.flatpak.enable = true;
+  # xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  # xdg.portal.enable = true;
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.reddirt = {
     isNormalUser = true;
@@ -83,12 +99,6 @@
       firefox
     ];
   };
-
-  # In order to run VS Code, you have to use Electron.  To use Electron
-  # you have to allow "insecure" packages
-  nixpkgs.config.permittedInsecurePackages = [ 
-    "electron-12.2.3" 
-  ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
