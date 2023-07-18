@@ -1,11 +1,13 @@
 
-# Dell XPS15 Production Configuration
+# Dell XPS15 Configuration
 
-In rather ineloquent terms, this just the configuration that is currently running and working on the machine.  I am probably going **way** overboard with the whole base, production, and testing thing, but it helps me keep everything organized until I can sort out some better method.  It would be really cool if such a mechnism existed within NixOS (well, I assume it doesn't anyway).  Yeah, I know, generations and all but what you end up there is a menu full of different generations that have no apparent meaning (because as far as I know there is no way to annotate them).
+When I started this I thought I would be smart.  I'll create separate configurations.  One as a base, initial install configuration, one for testing, and one that will be running on the computer.  As one can imagine this became quite unweildly very quickly.  I still have a quite a bit to learn before I try to introduce things like Flake and Home Manager.  So I made the decision to work from one configuration file.  I am the only user on this particular PC, no one has ever used it other than me, so why add in all the complexity especially at these early stages?
+
+In addition to this I found through using the configuration on bare metal, and testing in a VM, that much of the configuration, though originally intended for my Dell XPS15 specifically, transfered nicely to VM's and other hardware I have.  Seeing this it just made more sense to use a single configuration file but with my own weird and strange twists.  Namely in the fact that there are a lot of options that are currently commented out and I explore and understand the ones that aren't.
 
 I mentioned in the [partitioning](https://github.com/RedDirtBits/nixos/blob/main/docs/002-repartitioning.md) that I did things a little weird in that I tend to do things in stages.  One of the reasons for this is that I like to take good notes on such things.  So my generations menu selection tends to grow quite rapidly as I try new thing and make micro steps so I can capture what I hope to be, useful information.  Don't be hatin' on me, I mentioned I was a little unconventional.
 
-At any rate, this production configuration is where I hope to document most the the various changes I make along this journey and capture things like why is that needed, what does it do, when might it be useful.  You know, my normal bland, verbose stuff.  I mean, if you are having trouble sleeping and all...
+At any rate, this configuration is where I hope to document most the the various changes I make along this journey and capture things like why is that needed, what does it do, when might it be useful.  You know, my normal bland, verbose stuff.  I mean, if you are having trouble sleeping and all...
 
 # WARNING
 
@@ -19,9 +21,9 @@ I am willing to put in the work and I have no shame in making mistakes along the
 
 # The Configuration
 
-Let's walk through the configuration.
+Let's walk through the configuration.  I will note here that I try to comment my configuration file a lot, so there may be options shown here that are commented out in the actual configuration because I learned it was not needed in general or for my machine specifically.
 
-One of the first things you will notice is that I have dispensed with a lot of the curly brace _{}_ syntax.  This was by choice and intentional.  I have nothing against the curly braces, but I find the dotted notation more readable, and, for the moment, that is more important to me.  I am not ready, yet, to dive deep into the Nix Experession Language.  I need to better understand what it takes to get a fully functional, daily use machine up and running first.  In addition, I imagine new users that don't have any exposure to languages like JavaScript, perhaps Python to some extent, etc. might be a little intimidated by all the curly braces.  So, hopefully, using the dotted notation, for now, makes it less so for them.  Enough about that.
+One of the first things you will notice is that I have dispensed with a lot of the curly brace _{}_ syntax.  This was by choice and intentional.  I have nothing against the curly braces, but I find the dotted notation more readable, and, for the moment, that is more important to me.  I am not ready, yet, to dive deep into the Nix Experession Language.  I need to better understand what it takes to get a fully functional, daily use machine up and running first.  In addition, I imagine new users that don't have any exposure to languages like JavaScript, etc. might be a little intimidated by all the curly braces.  So, hopefully, using the dotted notation, for now, makes it less so for them.  Enough about that.
 
 ## Bootloader
 
@@ -33,7 +35,6 @@ boot.loader.grub.device = "nodev";
 boot.loader.grub.efiSupport = true;
 boot.loader.efi.canTouchEfiVariables = true;
 boot.loader.efi.efiSysMountPoint = "/boot";
-boot.loader.grub.useOSProber = true;
 ```
 
 If, however, you wish to use systemd, then you can use the following:
@@ -56,7 +57,7 @@ I am, as a general rule, not a fan of things being automatically configured for 
   networking.stevenblack.enable = true;
   networking.usePredictableInterfaceNames = false; # not really needed, just used for testing
   networking.networkmanager.enable = true;
-  programs.nm-applet.enable = true; # activates the netowork manager "gui" applet
+  programs.nm-applet.enable = true; # activates the netowork manager system tray applet
   ```
 
 I believe most of the options above are pretty self-explanatory though, I will go over a few.
