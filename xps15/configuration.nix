@@ -36,6 +36,11 @@
   networking.nameservers = [ "9.9.9.9" "149.112.112.112" ];
   networking.stevenblack.enable = true;
 
+  # I would not recommend using this unless you have a good reason to do so
+  # If you should, be sure this is configured before you reboot for the first
+  # time after installing NixOS.  
+  # networking.usePredictableInterfaceNames = false;
+
   # automatically activates wireless
   networking.networkmanager.enable = true;
 
@@ -61,8 +66,9 @@
 
   # Enable password authentication temporarily while the device is being configured
   # The documentation shows services.openssh.passwordAuthentication
-  # however, this has been   # deprecated in favor of the below syntax
+  # however, this has been deprecated in favor of the below syntax
   services.openssh.settings.PasswordAuthentication = true;
+  # services.openssh.settings.PermitRootLogin = "no";
 
   # Enable temperature management daemon
   services.thermald.enable = true;
@@ -113,6 +119,10 @@
   # services.xserver.windowManager.awesome.enable = true;
   # services.xserver.windowManager.dwm.enable = true;
 
+  # Some desktop managers allow you to install minimal setup.  That is
+  # they have none of the bloatware, addon applications, etc.
+  # services.cinnamon.apps.enable = false;
+
 ##########################################################################
 # GPU OPTIONS
 ##########################################################################
@@ -156,7 +166,7 @@
 # USER/USER ACCOUNT OPTIONS
 ##########################################################################
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  # Define a user account
   users.users.reddirt = {
     isNormalUser = true;
     initialPassword = "nixos";
@@ -197,6 +207,10 @@
   # Enable zram swap
   zramSwap.enable = true;
   zramSwap.memoryPercent = 25; # sets swap to 25% of installed memory
+
+##########################################################################
+# LETS CALL THIS OTHER OPTIONS
+##########################################################################
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
