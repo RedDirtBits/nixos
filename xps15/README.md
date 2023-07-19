@@ -3,7 +3,7 @@
 
 When I started this I thought I would be smart.  I'll create separate configurations.  One as a base, initial install configuration, one for testing, and one that will be running on the computer.  As one can imagine this became quite unweildly very quickly.  I still have a quite a bit to learn before I try to introduce things like Flake and Home Manager.  So I made the decision to work from one configuration file.  I am the only user on this particular PC, no one has ever used it other than me, so why add in all the complexity especially at these early stages?
 
-In addition to this I found through using the configuration on bare metal, and testing in a VM, that much of the configuration, though originally intended for my Dell XPS15 specifically, transfered nicely to VM's and other hardware I have.  Seeing this it just made more sense to use a single configuration file but with my own weird and strange twists.  Namely in the fact that there are a lot of options that are currently commented out and I explore and understand the ones that aren't.
+In addition to this I found through using the configuration on bare metal, and testing in a VM, that much of the configuration, though originally intended for my Dell XPS15 specifically, transfered nicely to VM's and other hardware I have.  Seeing this it just made more sense to use a single configuration file but with my own weird and strange twists.  Namely in the fact that there are a lot of options that are currently commented out as I explore and understand the ones that aren't.
 
 I mentioned in the [partitioning](https://github.com/RedDirtBits/nixos/blob/main/docs/002-repartitioning.md) that I did things a little weird in that I tend to do things in stages.  One of the reasons for this is that I like to take good notes on such things.  So my generations menu selection tends to grow quite rapidly as I try new thing and make micro steps so I can capture what I hope to be, useful information.  Don't be hatin' on me, I mentioned I was a little unconventional.
 
@@ -66,7 +66,7 @@ I believe most of the options above are pretty self-explanatory though, I will g
 networking.timeServers = [ "68.97.68.79" "152.2.133.52" "192.58.120.8 " ];
 ```
 
-Call me crazy, but I like to specify the NTP servers I use rather than the typical pool settings.  There's no real benefit I know of from doing so other than I get to tweak things a little more
+Call me crazy, but I like to specify the NTP servers I use rather than the typical pool settings.  There's no real benefit I know of from doing so other than I get to tweak things a little more.  Unless you live in the same geographical area that I do, I wouldn't use the servers I have listed.  Rather, search for public NTP servers that are in or close to the area you are in.  The closer the servers are to you, the better.
 
 ```bash
 networking.stevenblack.enable = true;
@@ -96,6 +96,8 @@ environment.systemPackages = with pkgs; [
 ```
 
 There is nothing spectacular about this part of the configuration with the exception of a couple packages I needed to install that I was not aware I would have to.  If you want or need to be able to run commands like _lspci_ or _lsusb_ then you will need to install the last two packages, _pciutils_ and _usbutils_.  It never occurred to me that such functionality would not be on a system by default but here we are.
+
+What I will note here is rather than configure all the packages needed at the user level, I will likely do all of mine at the system level.  I may ultimately try it out both ways (it could not be easier since its NixOS) just to see what if any changes there may be but remember, I am the only user on this machine so whether they are system or user level packages seems somewhat irrelevante.  At least at this stage of learning.  Though, I am sure there are some security concerns there and perhaps someone more in the know of such things could let me know what the pros and cons would be.
 
 ## Swap
 
