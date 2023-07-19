@@ -73,7 +73,15 @@
   # Enable temperature management daemon
   services.thermald.enable = true;
 
+  # Enable flatpak
+  # services.flatpak.enable = true;
+
+  # Enable bluetooth
+  # services.blueman.enable = true;
+
   # Enable GVFS (Needed to recognize other internal drives, external storage, etc. in the filesystem)
+  # services.devmon.enable = true;
+  # services.udisks2.enable = true;
   # services.gvfs.enable = true;
 
   # Enable adb if you work on your mobile device
@@ -91,7 +99,16 @@
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
-
+  i18n.extraLocaleSettings.LC_ADDRESS = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_IDENTIFICATION = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_MEASUREMENT = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_MONETARY = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_NAME = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_NUMERIC = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_PAPER = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_TELEPHONE = "en_US.UTF-8";
+  i18n.extraLocaleSettings.LC_TIME = "en_US.UTF-8";
+  
   # Configure keymap in X11
   services.xserver.layout = "us";
 
@@ -115,10 +132,16 @@
   # Display server and Window managers
   # services.xserver.enable = true;
   # services.xserver.xautolock.enable = true;
+
+  # display managers
   # services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  
+  # window managers
   # services.xserver.windowManager.awesome.enable = true;
   # services.xserver.windowManager.dwm.enable = true;
-
+  
+  # desktop manager
   # Some desktop managers allow you to install minimal setup.  That is
   # they have none of the bloatware, addon applications, etc.
   # services.cinnamon.apps.enable = false;
@@ -184,15 +207,32 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    alacritty
-    wget
-    git
+
+    # core packages
+    bluez
+    brightnessctl
+    bluez-tools
     curl
-    wget
     htop
+    libnotify
     neofetch
     pciutils
     usbutils
+    unzip
+    wget
+    zip
+
+    # system packages
+    blueman
+
+    # user packages
+    alacritty
+    git
+
+    # audio packages
+    pavucontrol
+    pipewire
+    wireplumber
   ];
 
   # Enable Flatpak
